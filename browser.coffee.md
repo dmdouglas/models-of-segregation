@@ -20,7 +20,7 @@ Next, we'll grab create our svg canvas, apply some event listeners and add it to
 									alert 'Simulation stopped'
 
 
-Now we need to createsvg circles to represent our agents and bind them to the actual agents from the simulation.  The `d` in the functions here is the D3js accessor to the agent data.
+Now we need to create svg circles to represent our agents and bind them to the actual agents from the simulation.  The `d` in the functions here is the D3js accessor to the agent data.
 
 	
 		populate = () ->

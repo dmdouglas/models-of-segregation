@@ -2,11 +2,12 @@
 
 ## Simulation Code
 
-First, let's declare any global variables we might need to access. Depth being the neighbourhood radious and step being the average movement distance of an agent.
+First, let's declare any global variables we might need to access. Depth being the neighbourhood radius and step being the average movement distance of an agent. Dislike is a value between 0 and 1 that represents the xenophobia of each agent.
 
 
 		depth = 50
 		step  = 50
+		dislike = 0.6
 
 
 We start with our agents.  Our agents exist in a 2D space, are of a certain race, and hold a xenophobic disposition.  For now, we will randomly assign them their race and geographic location. Their xenophobia will also be a function of their race.
@@ -15,7 +16,8 @@ We start with our agents.  Our agents exist in a 2D space, are of a certain race
 		class Agent
 			constructor: (@space) ->
 				@race = if Math.floor(Math.random() * 2) is 0 then "blue" else "red"
-				@xenophobia = if @race is "blue" then 0.6 else 0.6
+				#@xenophobia = if @race is "blue" then 0.6 else 0.6
+				@xenophobia = dislike
 				@x = Math.floor Math.random() * 600 
 				@y = Math.floor Math.random() * 600
 
@@ -28,7 +30,7 @@ The happiness of agents is determined by their neighbourhood composition.  If th
 				if homogeneity >= @xenophobia then true else false
 
 
-Next, we difine a 2D space representing the problem domain. Our space contains a geographical distribution of agents stored in a list.
+Next, we define a 2D space representing the problem domain. Our space contains a geographical distribution of agents stored in a list.
 
 
 		class Space
@@ -36,7 +38,7 @@ Next, we difine a 2D space representing the problem domain. Our space contains a
 				@agents = []
 
 
-In spacial arranements, everybody is next to somebody - their neighbour.  The relative composition of that neighbourhood - 10% homogeniality or 50% homogeniality - is determined by the race of ones neighbours and how deep the conception of neighbourhood extends.
+In spacial arrangements, everybody is next to somebody - their neighbour.  The relative composition of that neighbourhood - 10% homogeniality or 50% homogeniality - is determined by the race of ones neighbours and how deep the conception of neighbourhood extends.
 
 			neighbourhood: (x, y) ->
 				neighbours = []
@@ -57,6 +59,15 @@ The homogeniality of a neighbourhood relative to an agent is therefore calculate
 					same += 1 if agent.race is neighbour.race
 					others += 1 if agent.race isnt neighbour.race
 				same / (same + others)
+ 	   	 
+#Now we create a copy of the space that stores whether there is an agent at a given pair of coordinates.
+        
+#			present: (x, y) ->
+#				 occupied = 0
+#				 for other in @agents
+#				     occupied = 1 if x is agent.x and y is agent.y
+#				 occupied
+
 
 
 Now that we have defined our model, we need some functions to initiate and control behaviour.  We will instantiate the simulation by invoking the `agents` function.  This will create a space and populate it with agents.
@@ -74,12 +85,18 @@ We then need some logic for moving our agents around the space.  Movement could 
 
 		move = (agent) ->
 			unless agent.isHappy()
-				agent.x += (Math.random() * step) - step/2
-				agent.x = 25 if agent.x < 0
-				agent.x = 575 if agent.x > 600
-				agent.y += (Math.random() * step) - step/2
-				agent.y = 25 if agent.y < 0
-				agent.y = 575 if agent.y > 600
+				newX = agent.x
+				newX += (Math.random() * step) - step/2
+				newX = 25 if newX < 0
+				newX = 575 if newX > 600
+				newY = agent.y
+				newY += (Math.random() * step) - step/2
+				newY = 25 if newY < 0
+				newY = 575 if newY > 600				
+				#move agent if occupied(newX, newY) 
+				agent.x = newX
+				agent.y = newY
+
 
 
 Finally, we declare our public API so that other modules can access it.
